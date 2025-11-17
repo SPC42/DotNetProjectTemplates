@@ -1,0 +1,3 @@
+[submodule "content/WinFormsAspNetCoreSingleExe"]
+	path = content/WinFormsAspNetCoreSingleExe
+	url = https://github.com/hirankit/WinFormsAspNetCoreSingleExe.git

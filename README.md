@@ -52,3 +52,63 @@ If you've already cloned the repository without submodules, initialize them with
 ```bash
 git submodule update --init --recursive
 ```
+
+## Testing Templates Locally
+
+Before publishing your templates, you should test them locally to ensure they work as expected.
+
+### Installing Templates Locally
+
+1. Navigate to the repository root:
+   ```bash
+   cd /path/to/DotNetProjectTemplates
+   ```
+
+2. Install the templates from the local project:
+   ```bash
+   dotnet new install .
+   ```
+
+   This will install all templates from the `content` directory.
+
+### Using the Templates
+
+3. List available templates to verify installation:
+   ```bash
+   dotnet new list
+   ```
+
+4. Create a new project from your template:
+   ```bash
+   dotnet new <template-short-name> -n MyTestProject
+   ```
+
+5. Navigate to the created project and test it:
+   ```bash
+   cd MyTestProject
+   dotnet build
+   dotnet run
+   ```
+
+### Uninstalling Local Templates
+
+When you're done testing or need to reinstall with changes:
+
+```bash
+dotnet new uninstall .
+```
+
+Or uninstall by package name:
+
+```bash
+dotnet new uninstall SPC42.DotNetProjectTemplates
+```
+
+### Iterating on Templates
+
+When making changes to templates:
+
+1. Uninstall the current version
+2. Make your changes to the template files in `content/<TemplateName>`
+3. Reinstall using `dotnet new install .`
+4. Test the updated template
