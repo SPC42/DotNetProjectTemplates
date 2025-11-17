@@ -1,0 +1,44 @@
+name: Publish Alpha NuGet Package
+
+on:
+  push:
+    branch:
+      - alpha
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Initialize and Update Submodules
+        run: |
+          git submodule init
+          git submodule update
+
+      - name: Setup .NET CORE SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore .NET Dependencies
+        run: dotnet restore SPC42.DotNetProjectTemplates.csproj
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore SPC42.DotNetProjectTemplates.csproj
+
+      - name: Pack
+        run: |
+          dotnet pack --configuration Release --no-build --output ./nupkg SPC42.DotNetProjectTemplates.csproj
+          $nupkgPath = Get-ChildItem -Path ./nupkg -Filter *.nupkg | Select-Object -ExpandProperty FullName
+          echo "NUPKG_PATH=$nupkgPath" >> $env:GITHUB_ENV
+
+
+      - name: Publish to NuGet.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push $env:NUPKG_PATH --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
