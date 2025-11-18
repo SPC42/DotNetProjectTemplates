@@ -74,7 +74,7 @@ Before publishing your templates, you should test them locally to ensure they wo
 
 4. Create a new project from your template:
    ```bash
-   dotnet new <template-short-name> -n MyTestProject
+   dotnet new <template-short-name> -o MyTestProject
    ```
 
 5. Navigate to the created project and test it:
@@ -126,3 +126,62 @@ When testing template changes:
    git add content/<TemplateName>
    git commit -m "Update <TemplateName> to latest version"
    ```
+
+## Publishing to NuGet
+
+The repository uses GitHub Actions to automatically publish packages to NuGet.org.
+
+### Setting Up NuGet API Key
+
+1. Generate a NuGet API key:
+
+2. Add the API key to GitHub repository secrets:
+   - Navigate to your repository on GitHub
+   - Go to **Settings** → **Secrets and variables** → **Actions**
+   - Click **New Repository Secret**
+   - Name: `NUGET_API_KEY`
+   - Value: Paste your NuGet API key
+   - Click **Add secret**
+
+### Publishing Workflow
+
+The GitHub Actions workflow (`.github/workflows/publish-alpha.yaml`) automatically triggers on:
+- Pushes to the `alpha` branch
+- Version tags matching `v*.*.*`
+
+### Releasing a New Version
+
+To publish a new version to NuGet:
+
+1. Update template(s) via git submodule:
+   ```bash
+   cd content/<TemplateName>
+   git pull origin main
+   cd ../..
+   ```
+
+2. Bump the version in `SPC42.DotNetProjectTemplates.csproj`:
+   ```xml
+   <PackageVersion>N.N.N</PackageVersion>
+   ```
+
+3. Commit the submodule update and version bump:
+   ```bash
+   git add content/ SPC42.DotNetProjectTemplates.csproj
+   git commit -m "Update templates and bump version to N.N.N"
+   ```
+
+4. Create a version tag matching the package version:
+   ```bash
+   git tag v0.2.4
+   ```
+
+5. Push the commit and tag to GitHub:
+   ```bash
+   git push origin main
+   git push origin vN.N.N
+   ```
+
+The GitHub Actions workflow will automatically trigger and publish the package to NuGet.org.
+
+**Note:** Ensure the tag version (`vN.N.N`) matches the `PackageVersion` in the `.csproj` file.
