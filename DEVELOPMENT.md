@@ -21,12 +21,6 @@ Templates are managed as git submodules in the `/content` directory. This allows
    git submodule add https://github.com/example/MyTemplate content/MyTemplate
    ```
 
-3. Commit the submodule addition:
-   ```bash
-   git add .gitmodules content/<TemplateName>
-   git commit -m "Add <TemplateName> template"
-   ```
-
 ### Updating Submodule Templates
 
 To update a template to the latest version from its source repository:
@@ -98,17 +92,37 @@ When you're done testing or need to reinstall with changes:
 dotnet new uninstall .
 ```
 
-Or uninstall by package name:
-
-```bash
-dotnet new uninstall SPC42.DotNetProjectTemplates
-```
-
 ### Iterating on Templates
 
-When making changes to templates:
+When testing template changes:
 
-1. Uninstall the current version
-2. Make your changes to the template files in `content/<TemplateName>`
-3. Reinstall using `dotnet new install .`
-4. Test the updated template
+1. Make changes in the source template repository
+2. Update the submodule to pull the latest changes:
+
+   **For the default branch:**
+   ```bash
+   git submodule update --remote content/<TemplateName>
+   ```
+
+   **For a specific branch:**
+   ```bash
+   cd content/<TemplateName>
+   git checkout <branch-name>
+   git pull origin <branch-name>
+   cd ../..
+   ```
+
+3. Uninstall the current local version:
+   ```bash
+   dotnet new uninstall .
+   ```
+4. Reinstall with the updated template:
+   ```bash
+   dotnet new install .
+   ```
+5. Test the updated template
+6. If changes are good, commit the submodule update:
+   ```bash
+   git add content/<TemplateName>
+   git commit -m "Update <TemplateName> to latest version"
+   ```
